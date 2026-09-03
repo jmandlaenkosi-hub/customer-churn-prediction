@@ -10,9 +10,269 @@ import os
 # =========================================================
 
 st.set_page_config(
-    page_title="Customer Churn Predictor",
-    page_icon="📊",
-    layout="wide"
+    page_title="ChurnAI | Customer Churn Predictor",
+    page_icon="🔮",
+    layout="wide",
+    initial_sidebar_state="collapsed"
+)
+
+
+# =========================================================
+# CUSTOM CSS
+# =========================================================
+
+st.markdown(
+    """
+    <style>
+
+    /* Main page */
+    .stApp {
+        background: linear-gradient(
+            135deg,
+            #0f172a 0%,
+            #111827 50%,
+            #172554 100%
+        );
+    }
+
+    .block-container {
+        max-width: 1250px;
+        padding-top: 2rem;
+        padding-bottom: 3rem;
+    }
+
+    /* Header */
+    .hero {
+        padding: 35px 40px;
+        border-radius: 24px;
+        background: linear-gradient(
+            135deg,
+            #1e293b,
+            #1e3a8a
+        );
+        border: 1px solid rgba(255,255,255,0.12);
+        margin-bottom: 25px;
+        box-shadow: 0 15px 40px rgba(0,0,0,0.25);
+    }
+
+    .hero-title {
+        font-size: 46px;
+        font-weight: 800;
+        color: white;
+        margin-bottom: 8px;
+    }
+
+    .hero-subtitle {
+        font-size: 18px;
+        color: #cbd5e1;
+        line-height: 1.6;
+    }
+
+    .hero-badge {
+        display: inline-block;
+        margin-top: 15px;
+        padding: 7px 14px;
+        border-radius: 20px;
+        background: rgba(255,255,255,0.10);
+        color: #bfdbfe;
+        font-size: 14px;
+        font-weight: 600;
+    }
+
+    /* Section titles */
+    .section-title {
+        font-size: 25px;
+        font-weight: 750;
+        color: white;
+        margin-top: 25px;
+        margin-bottom: 15px;
+    }
+
+    .section-description {
+        color: #94a3b8;
+        font-size: 15px;
+        margin-bottom: 20px;
+    }
+
+    /* Cards */
+    .info-card {
+        padding: 22px;
+        border-radius: 18px;
+        background: rgba(30,41,59,0.78);
+        border: 1px solid rgba(148,163,184,0.15);
+        min-height: 115px;
+        box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+    }
+
+    .card-label {
+        color: #94a3b8;
+        font-size: 14px;
+        margin-bottom: 7px;
+    }
+
+    .card-value {
+        color: white;
+        font-size: 26px;
+        font-weight: 750;
+    }
+
+    /* Result cards */
+    .result-card {
+        padding: 28px;
+        border-radius: 20px;
+        background: rgba(15,23,42,0.85);
+        border: 1px solid rgba(148,163,184,0.16);
+        text-align: center;
+        min-height: 170px;
+        box-shadow: 0 12px 30px rgba(0,0,0,0.20);
+    }
+
+    .result-icon {
+        font-size: 34px;
+        margin-bottom: 8px;
+    }
+
+    .result-label {
+        color: #94a3b8;
+        font-size: 14px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+
+    .result-value {
+        color: white;
+        font-size: 32px;
+        font-weight: 800;
+        margin-top: 8px;
+    }
+
+    /* Risk badges */
+    .risk-low {
+        display: inline-block;
+        padding: 9px 18px;
+        border-radius: 25px;
+        background: rgba(34,197,94,0.16);
+        color: #4ade80;
+        font-weight: 800;
+        font-size: 20px;
+    }
+
+    .risk-medium {
+        display: inline-block;
+        padding: 9px 18px;
+        border-radius: 25px;
+        background: rgba(245,158,11,0.16);
+        color: #fbbf24;
+        font-weight: 800;
+        font-size: 20px;
+    }
+
+    .risk-high {
+        display: inline-block;
+        padding: 9px 18px;
+        border-radius: 25px;
+        background: rgba(239,68,68,0.16);
+        color: #f87171;
+        font-weight: 800;
+        font-size: 20px;
+    }
+
+    /* Prediction banner */
+    .prediction-stay {
+        padding: 20px;
+        border-radius: 18px;
+        background: rgba(34,197,94,0.12);
+        border: 1px solid rgba(34,197,94,0.35);
+        color: #86efac;
+        font-size: 22px;
+        font-weight: 750;
+        text-align: center;
+    }
+
+    .prediction-churn {
+        padding: 20px;
+        border-radius: 18px;
+        background: rgba(239,68,68,0.12);
+        border: 1px solid rgba(239,68,68,0.35);
+        color: #fca5a5;
+        font-size: 22px;
+        font-weight: 750;
+        text-align: center;
+    }
+
+    /* Interpretation */
+    .interpretation {
+        padding: 22px;
+        border-radius: 18px;
+        background: rgba(30,41,59,0.75);
+        border-left: 5px solid #60a5fa;
+        color: #dbeafe;
+        font-size: 16px;
+        line-height: 1.7;
+    }
+
+    /* Model cards */
+    .model-card {
+        text-align: center;
+        padding: 20px;
+        border-radius: 18px;
+        background: rgba(30,41,59,0.75);
+        border: 1px solid rgba(148,163,184,0.14);
+    }
+
+    .model-number {
+        font-size: 28px;
+        font-weight: 800;
+        color: #60a5fa;
+    }
+
+    .model-name {
+        color: #cbd5e1;
+        font-size: 13px;
+        margin-top: 5px;
+    }
+
+    /* Button */
+    .stButton > button {
+        width: 100%;
+        min-height: 55px;
+        border-radius: 14px;
+        border: none;
+        font-size: 17px;
+        font-weight: 750;
+        background: linear-gradient(
+            90deg,
+            #2563eb,
+            #7c3aed
+        );
+        color: white;
+        transition: 0.2s ease;
+    }
+
+    .stButton > button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 25px rgba(37,99,235,0.35);
+    }
+
+    /* Input labels */
+    label {
+        color: #cbd5e1 !important;
+        font-weight: 600 !important;
+    }
+
+    /* Footer */
+    .footer {
+        text-align: center;
+        color: #64748b;
+        font-size: 13px;
+        padding-top: 35px;
+        margin-top: 40px;
+        border-top: 1px solid rgba(148,163,184,0.12);
+    }
+
+    </style>
+    """,
+    unsafe_allow_html=True
 )
 
 
@@ -30,80 +290,33 @@ MODEL_PATH = os.path.join(
 try:
     model = joblib.load(MODEL_PATH)
     model_loaded = True
+
 except Exception as e:
     model_loaded = False
     model_error = str(e)
 
 
 # =========================================================
-# CUSTOM CSS
+# HERO HEADER
 # =========================================================
 
 st.markdown(
     """
-    <style>
+    <div class="hero">
+        <div class="hero-title">🔮 ChurnAI</div>
 
-    .main-title {
-        font-size: 42px;
-        font-weight: 700;
-        text-align: center;
-        margin-bottom: 5px;
-    }
+        <div class="hero-subtitle">
+            Intelligent customer churn prediction powered by
+            machine learning.
+        </div>
 
-    .subtitle {
-        text-align: center;
-        font-size: 18px;
-        margin-bottom: 30px;
-    }
-
-    .risk-high {
-        padding: 20px;
-        border-radius: 12px;
-        text-align: center;
-        font-size: 28px;
-        font-weight: 700;
-        border: 2px solid #d9534f;
-    }
-
-    .risk-low {
-        padding: 20px;
-        border-radius: 12px;
-        text-align: center;
-        font-size: 28px;
-        font-weight: 700;
-        border: 2px solid #5cb85c;
-    }
-
-    .metric-box {
-        padding: 15px;
-        border-radius: 10px;
-        text-align: center;
-        border: 1px solid #dddddd;
-    }
-
-    </style>
+        <div class="hero-badge">
+            MACHINE LEARNING • CUSTOMER ANALYTICS • RISK PREDICTION
+        </div>
+    </div>
     """,
     unsafe_allow_html=True
 )
-
-
-# =========================================================
-# HEADER
-# =========================================================
-
-st.markdown(
-    '<div class="main-title">📊 Customer Churn Predictor</div>',
-    unsafe_allow_html=True
-)
-
-st.markdown(
-    '<div class="subtitle">'
-    'Machine Learning Powered Customer Risk Assessment'
-    '</div>',
-    unsafe_allow_html=True
-)
-
-st.divider()
 
 
 # =========================================================
@@ -112,9 +325,7 @@ st.divider()
 
 if not model_loaded:
 
-    st.error(
-        "The trained model could not be loaded."
-    )
+    st.error("The trained model could not be loaded.")
 
     st.code(model_error)
 
@@ -122,15 +333,36 @@ if not model_loaded:
 
 
 # =========================================================
-# CUSTOMER INFORMATION
+# CUSTOMER PROFILE
 # =========================================================
 
-st.subheader("👤 Customer Information")
+st.markdown(
+    '<div class="section-title">👤 Customer Profile</div>',
+    unsafe_allow_html=True
+)
+
+st.markdown(
+    '<div class="section-description">'
+    'Enter the customer characteristics below to estimate their '
+    'churn probability.'
+    '</div>',
+    unsafe_allow_html=True
+)
+
+
+# =========================================================
+# PERSONAL INFORMATION
+# =========================================================
 
 col1, col2, col3 = st.columns(3)
 
 
 with col1:
+
+    st.markdown(
+        '<div class="card-label">PERSONAL INFORMATION</div>',
+        unsafe_allow_html=True
+    )
 
     gender = st.selectbox(
         "Gender",
@@ -162,7 +394,16 @@ with col1:
     )
 
 
+# =========================================================
+# TELECOMMUNICATION SERVICES
+# =========================================================
+
 with col2:
+
+    st.markdown(
+        '<div class="card-label">TELECOMMUNICATION SERVICES</div>',
+        unsafe_allow_html=True
+    )
 
     phone_service = st.selectbox(
         "Phone Service",
@@ -206,7 +447,16 @@ with col2:
     )
 
 
+# =========================================================
+# ADDITIONAL SERVICES
+# =========================================================
+
 with col3:
+
+    st.markdown(
+        '<div class="card-label">ADDITIONAL SERVICES</div>',
+        unsafe_allow_html=True
+    )
 
     device_protection = st.selectbox(
         "Device Protection",
@@ -246,15 +496,18 @@ with col3:
 
 
 # =========================================================
-# CONTRACT AND BILLING
+# CONTRACT & BILLING
 # =========================================================
 
-st.subheader("💳 Contract and Billing")
+st.markdown(
+    '<div class="section-title">💳 Contract & Billing</div>',
+    unsafe_allow_html=True
+)
 
-col4, col5, col6 = st.columns(3)
+billing_col1, billing_col2, billing_col3 = st.columns(3)
 
 
-with col4:
+with billing_col1:
 
     contract = st.selectbox(
         "Contract",
@@ -271,7 +524,7 @@ with col4:
     )
 
 
-with col5:
+with billing_col2:
 
     payment_method = st.selectbox(
         "Payment Method",
@@ -284,7 +537,7 @@ with col5:
     )
 
 
-with col6:
+with billing_col3:
 
     monthly_charges = st.number_input(
         "Monthly Charges",
@@ -301,9 +554,6 @@ with col6:
         value=780.0,
         step=10.0
     )
-
-
-st.divider()
 
 
 # =========================================================
@@ -334,28 +584,41 @@ customer_data = pd.DataFrame({
 
 
 # =========================================================
-# PREDICTION
+# PREDICTION BUTTON
 # =========================================================
 
-st.subheader("🔮 Churn Prediction")
+st.markdown("<br>", unsafe_allow_html=True)
 
 predict_button = st.button(
-    "🚀 Predict Customer Churn",
+    "🚀 ANALYZE CUSTOMER CHURN RISK",
     use_container_width=True
 )
 
+
+# =========================================================
+# PREDICTION
+# =========================================================
 
 if predict_button:
 
     try:
 
+        # Prediction
         prediction = model.predict(
             customer_data
         )[0]
 
-        probability = model.predict_proba(
+        # Probability
+        probabilities = model.predict_proba(
             customer_data
-        )[0, 1]
+        )[0]
+
+        # Safely identify the Yes class
+        class_names = list(model.classes_)
+
+        yes_index = class_names.index("Yes")
+
+        probability = probabilities[yes_index]
 
         probability_percent = probability * 100
 
@@ -368,60 +631,117 @@ if predict_button:
 
             risk_level = "HIGH RISK"
             risk_class = "risk-high"
+            risk_icon = "🔴"
 
         elif probability_percent >= 40:
 
             risk_level = "MEDIUM RISK"
-            risk_class = "risk-high"
+            risk_class = "risk-medium"
+            risk_icon = "🟠"
 
         else:
 
             risk_level = "LOW RISK"
             risk_class = "risk-low"
-
-
-        st.divider()
-
-        st.subheader("📈 Prediction Result")
+            risk_icon = "🟢"
 
 
         # =================================================
-        # RESULT COLUMNS
+        # RESULTS
         # =================================================
+
+        st.markdown(
+            '<div class="section-title">📊 Prediction Result</div>',
+            unsafe_allow_html=True
+        )
 
         result_col1, result_col2, result_col3 = st.columns(3)
 
 
+        # Prediction
         with result_col1:
 
             if prediction == "Yes":
 
-                st.error(
-                    "⚠️ CUSTOMER LIKELY TO CHURN"
+                st.markdown(
+                    """
+                    <div class="result-card">
+                        <div class="result-icon">⚠️</div>
+                        <div class="result-label">
+                            Prediction
+                        </div>
+                        <div class="result-value">
+                            Likely to Churn
+                        </div>
+                    </div>
+                    """,
+                    unsafe_allow_html=True
                 )
 
             else:
 
-                st.success(
-                    "✅ CUSTOMER LIKELY TO STAY"
+                st.markdown(
+                    """
+                    <div class="result-card">
+                        <div class="result-icon">✅</div>
+                        <div class="result-label">
+                            Prediction
+                        </div>
+                        <div class="result-value">
+                            Likely to Stay
+                        </div>
+                    </div>
+                    """,
+                    unsafe_allow_html=True
                 )
 
 
+        # Probability
         with result_col2:
 
-            st.metric(
-                "Churn Probability",
-                f"{probability_percent:.1f}%"
+            st.markdown(
+                f"""
+                <div class="result-card">
+                    <div class="result-icon">📈</div>
+                    <div class="result-label">
+                        Churn Probability
+                    </div>
+                    <div class="result-value">
+                        {probability_percent:.1f}%
+                    </div>
+                </div>
+                """,
+                unsafe_allow_html=True
             )
 
 
+        # Risk
         with result_col3:
 
-            st.metric(
-                "Risk Level",
-                risk_level
+            st.markdown(
+                f"""
+                <div class="result-card">
+                    <div class="result-icon">
+                        {risk_icon}
+                    </div>
+
+                    <div class="result-label">
+                        Risk Level
+                    </div>
+
+                    <div style="margin-top:12px;">
+                        <span class="{risk_class}">
+                            {risk_level}
+                        </span>
+                    </div>
+                </div>
+                """,
+                unsafe_allow_html=True
             )
 
+
+        # Probability progress bar
+        st.markdown("<br>", unsafe_allow_html=True)
 
         st.progress(
             float(probability)
@@ -432,29 +752,100 @@ if predict_button:
         # INTERPRETATION
         # =================================================
 
-        st.subheader("🧠 Model Interpretation")
+        st.markdown(
+            '<div class="section-title">🧠 Model Interpretation</div>',
+            unsafe_allow_html=True
+        )
+
 
         if probability_percent >= 70:
 
-            st.warning(
-                "This customer has a high predicted "
-                "probability of churn. Consider proactive "
-                "customer-retention strategies."
+            interpretation = (
+                "This customer has a high predicted probability "
+                "of churn. Proactive retention strategies and "
+                "targeted engagement may be appropriate."
             )
 
         elif probability_percent >= 40:
 
-            st.info(
-                "This customer has a moderate predicted "
-                "churn risk. Monitoring and targeted "
-                "engagement may be appropriate."
+            interpretation = (
+                "This customer has a moderate predicted churn "
+                "risk. Monitoring and targeted engagement may "
+                "be appropriate."
             )
 
         else:
 
-            st.success(
-                "This customer has a relatively low "
-                "predicted probability of churn."
+            interpretation = (
+                "This customer has a relatively low predicted "
+                "probability of churn."
+            )
+
+
+        st.markdown(
+            f"""
+            <div class="interpretation">
+                {interpretation}
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
+
+
+        # =================================================
+        # MODEL PERFORMANCE
+        # =================================================
+
+        st.markdown(
+            '<div class="section-title">🤖 Model Performance</div>',
+            unsafe_allow_html=True
+        )
+
+        perf1, perf2, perf3 = st.columns(3)
+
+
+        with perf1:
+
+            st.markdown(
+                """
+                <div class="model-card">
+                    <div class="model-number">84.25%</div>
+                    <div class="model-name">
+                        ROC-AUC
+                    </div>
+                </div>
+                """,
+                unsafe_allow_html=True
+            )
+
+
+        with perf2:
+
+            st.markdown(
+                """
+                <div class="model-card">
+                    <div class="model-number">75.13%</div>
+                    <div class="model-name">
+                        Churn Recall
+                    </div>
+                </div>
+                """,
+                unsafe_allow_html=True
+            )
+
+
+        with perf3:
+
+            st.markdown(
+                """
+                <div class="model-card">
+                    <div class="model-number">63.57%</div>
+                    <div class="model-name">
+                        Churn F1 Score
+                    </div>
+                </div>
+                """,
+                unsafe_allow_html=True
             )
 
 
@@ -462,20 +853,39 @@ if predict_button:
         # CUSTOMER SUMMARY
         # =================================================
 
-        with st.expander(
-            "View Customer Information"
-        ):
+        st.markdown("<br>", unsafe_allow_html=True)
+
+        with st.expander("👁️ View Customer Information"):
 
             st.dataframe(
                 customer_data,
-                use_container_width=True
+                use_container_width=True,
+                hide_index=True
             )
 
 
     except Exception as e:
 
         st.error(
-            "Prediction failed."
+            "Prediction failed. Please check the input values "
+            "and model configuration."
         )
 
         st.exception(e)
+
+
+# =========================================================
+# FOOTER
+# =========================================================
+
+st.markdown(
+    """
+    <div class="footer">
+        🔮 ChurnAI &nbsp;•&nbsp;
+        Customer Churn Prediction System
+        <br><br>
+        Built with Python • Scikit-learn • Pandas • Streamlit
+    </div>
+    """,
+    unsafe_allow_html=True
+)
