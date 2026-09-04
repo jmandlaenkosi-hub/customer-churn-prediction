@@ -281,10 +281,10 @@ st.markdown(
 # =========================================================
 
 MODEL_PATH = os.path.join(
-    os.path.dirname(__file__),
-    "..",
+    os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
     "models",
     "customer_churn_model.pkl"
+
 )
 
 try:
