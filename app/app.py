@@ -289,11 +289,11 @@ MODEL_PATH = os.path.join(
 
 try:
     model = joblib.load(MODEL_PATH)
-    model_loaded = True
-
 except Exception as e:
-    model_loaded = False
-    model_error = str(e)
+    st.error("The trained model could not be loaded.")
+    st.error(f"Error: {e}")
+    st.error(f"Model path: {MODEL_PATH}")
+    st.stop()
 
 
 # =========================================================
